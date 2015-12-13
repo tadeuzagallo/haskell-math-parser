@@ -12,7 +12,8 @@ tokenize expression = reverse tokens where (tokens, _) = tokenize' ([], expressi
 
 tokenize' :: ([Token], String) -> ([Token], String)
 tokenize' (tokens, []) = (tokens, [])
-tokenize' (tokens, (lookahead:expr))
+tokenize' (tokens, ' ':expr) = tokenize' (tokens, expr)
+tokenize' (tokens, lookahead:expr)
   | lookahead == '+' = tokenize' (Plus : tokens, expr)
   | lookahead == '-' = tokenize' (Minus : tokens, expr)
   | lookahead == '*' = tokenize' (Star : tokens, expr)
@@ -22,7 +23,7 @@ tokenize' (tokens, (lookahead:expr))
   | isNumber lookahead =
     let (n, expr') = tokenizeNumber (0, lookahead:expr)
     in tokenize' (Number n : tokens, expr')
-  | otherwise = error $ "Unexpected token: " ++ [lookahead]
+  | otherwise = error $ "Unexpected token: '" ++ [lookahead] ++ "'"
 
 tokenizeNumber :: (Double, String) -> (Double, String)
 tokenizeNumber (sum, []) = (sum, [])
